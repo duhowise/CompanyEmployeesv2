@@ -3,12 +3,14 @@ using CompanyEmployees.ActionFilters;
 using Contracts;
 using Entities.DataTransferObjects;
 using Entities.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CompanyEmployees.Controllers
 {
-    [Route("api/[controller]")]
+    [Microsoft.AspNetCore.Mvc.Route("api/[controller]")]
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
@@ -17,7 +19,8 @@ namespace CompanyEmployees.Controllers
         private readonly IMapper _mapper;
         private readonly ILoggerManager _logger;
 
-        public AuthenticationController(UserManager<User> userManager,IAuthenticationManager authenticationManager, IMapper mapper, ILoggerManager logger)
+        public AuthenticationController(UserManager<User> userManager, IAuthenticationManager authenticationManager,
+            IMapper mapper, ILoggerManager logger)
         {
             _userManager = userManager;
             _authenticationManager = authenticationManager;
@@ -46,7 +49,8 @@ namespace CompanyEmployees.Controllers
         }
 
 
-      [HttpPost("login")]  public async Task<IActionResult> Authenticate([FromBody] UserForAuthenticationDto user)
+        [HttpPost("login")]
+        public async Task<IActionResult> Authenticate([FromBody] UserForAuthenticationDto user)
         {
             if (!await _authenticationManager.ValidateUser(user))
             {
@@ -55,6 +59,15 @@ namespace CompanyEmployees.Controllers
             }
 
             return Ok(new { Token = await _authenticationManager.CreateToken() });
+        }
+
+      [AllowAnonymous] [HttpGet] public IActionResult Logs()
+        {
+            _logger.LogInfo("Here is info message from our values controller.");
+            _logger.LogDebug("Here is debug message from our values controller.");
+            _logger.LogWarn("Here is warn message from our values controller.");
+            _logger.LogError("Here is an error message from our values controller.");
+            return Ok();
         }
     }
 }
