@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -32,6 +32,7 @@
     <Folder Include="Extensions\" />
     <Folder Include="ModelBinders\" />
     <Folder Include="ActionFilters\" />
+    <Folder Include="ContextFactory\" />
   </ItemGroup>
 
   <ItemGroup>
