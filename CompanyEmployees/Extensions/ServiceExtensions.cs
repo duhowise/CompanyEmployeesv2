@@ -15,6 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using Repository;
+using Service.Contracts;
 
 namespace CompanyEmployees.Extensions;
 
@@ -46,9 +47,7 @@ public static class ServiceExtensions
     {
         services.AddDbContext<RepositoryContext>(options =>
         {
-            options.UseSqlServer(configuration.GetConnectionString("sqlConnection"),
-                sqlServerOptionsAction => { sqlServerOptionsAction.MigrationsAssembly("CompanyEmployees"); }
-            );
+            options.UseSqlServer(configuration.GetConnectionString("sqlConnection"));
         });
     }
 
@@ -81,6 +80,7 @@ public static class ServiceExtensions
                 newtonsoftJsonOutputFormatter
                     .SupportedMediaTypes.Add("application/vnd.codemaze.apiroot+json");
             }
+
             var xmlOutputFormatter = config.OutputFormatters
                 .OfType<XmlDataContractSerializerOutputFormatter>()?.FirstOrDefault();
             if (xmlOutputFormatter != null)
@@ -117,16 +117,12 @@ public static class ServiceExtensions
 
     public static void ConfigureHttpCacheHeaders(this IServiceCollection services)
     {
-        services.AddHttpCacheHeaders((expiryOptions )=>
-        {
-            expiryOptions.MaxAge = 65;
-            expiryOptions.CacheLocation = CacheLocation.Private;
-            
-        },(validationOptions =>
+        services.AddHttpCacheHeaders((expiryOptions) =>
             {
-                validationOptions.MustRevalidate = true;
-            })
-            );
+                expiryOptions.MaxAge = 65;
+                expiryOptions.CacheLocation = CacheLocation.Private;
+            }, (validationOptions => { validationOptions.MustRevalidate = true; })
+        );
     }
 
 
@@ -141,10 +137,7 @@ public static class ServiceExtensions
                 Period = "5m"
             }
         };
-        services.Configure<IpRateLimitOptions>(option =>
-        {
-            option.GeneralRules = rateLimitRules;
-        });
+        services.Configure<IpRateLimitOptions>(option => { option.GeneralRules = rateLimitRules; });
         services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
         services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
         services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
@@ -157,7 +150,7 @@ public static class ServiceExtensions
         {
             options.Password.RequireDigit = true;
             options.Password.RequireLowercase = false;
-            options.Password.RequireUppercase= false;
+            options.Password.RequireUppercase = false;
             options.Password.RequireNonAlphanumeric = false;
             options.Password.RequiredLength = 10;
             options.User.RequireUniqueEmail = true;
@@ -167,16 +160,16 @@ public static class ServiceExtensions
         builder.AddEntityFrameworkStores<RepositoryContext>().AddDefaultTokenProviders();
     }
 
-    public static void ConfigureJWT(this IServiceCollection services,IConfiguration configuration)
+    public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
     {
         var jwtSettings = configuration.GetSection("JwtSettings");
         var secretKey = Environment.GetEnvironmentVariable("SECRET");
 
         services.AddAuthentication(option =>
-        {
-            option.DefaultAuthenticateScheme= JwtBearerDefaults.AuthenticationScheme;
-            option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddJwtBearer(options =>
+            {
+                option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
@@ -194,9 +187,9 @@ public static class ServiceExtensions
 
     public static void ConfigureSwagger(this IServiceCollection services)
     {
-        services.AddSwaggerGen(options=>
+        services.AddSwaggerGen(options =>
         {
-            options.AddSecurityDefinition("Bearer",new OpenApiSecurityScheme
+            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
                 In = ParameterLocation.Header,
                 Description = "Place to add JWT with Bearer",
@@ -222,5 +215,12 @@ public static class ServiceExtensions
             });
         });
     }
+
+    public static void ConfigureServiceManager(this IServiceCollection services)
+    {
+        services.AddScoped<IServiceManager, IServiceManager>();
+    }
+
+
 
 }
