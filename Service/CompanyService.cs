@@ -21,16 +21,10 @@ public class CompanyService:ICompanyService
 
     public IEnumerable<CompanyDto> GetAllCompanies(bool trackChanges)
     {
-        try
-        {
+       
             var companies = _repository.Company.GetAllCompanies(trackChanges);
             var companiesDto = _mapper.Map<CompanyDto[]>(companies);
             return companiesDto;
-        }
-        catch (Exception exception)
-        {
-           _logger.LogError($"Something went wrong in the {nameof(GetAllCompanies)} service method {exception} ");
-            throw;
-        }
+        
     }
 }
