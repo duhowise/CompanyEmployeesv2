@@ -1,7 +1,7 @@
 ﻿using Contracts;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CompanyEmployees.Controllers;
+namespace CompanyEmployees.Presentation.Controllers;
 [ApiVersion("2.0",Deprecated = true)]
 [Route("api/companies")]
 [ApiController]

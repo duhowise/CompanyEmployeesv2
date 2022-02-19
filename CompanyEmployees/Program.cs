@@ -1,7 +1,7 @@
 using AspNetCoreRateLimit;
-using CompanyEmployees.ActionFilters;
 using CompanyEmployees.Extensions;
-using CompanyEmployees.Utility;
+using CompanyEmployees.Presentation.ActionFilters;
+using CompanyEmployees.Presentation.Utility;
 using Contracts;
 using Entities.DataTransferObjects;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -32,7 +32,9 @@ builder.Services.AddControllers(config =>
     config.RespectBrowserAcceptHeader = true;
     config.ReturnHttpNotAcceptable = true;
     config.CacheProfiles.Add("120SecondsDuration",new CacheProfile{Duration = 120});
-}).AddNewtonsoftJson()
+})
+    .AddApplicationPart(typeof(CompanyEmployees.Presentation.AssemblyReference).Assembly)
+    .AddNewtonsoftJson()
     .AddCustomCsvFormatter()
     .AddXmlDataContractSerializerFormatters();
 builder.Services.Configure<ApiBehaviorOptions>(options =>
@@ -103,17 +105,6 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
     ForwardedHeaders = ForwardedHeaders.All
 });
 app.UseAuthorization();
-app.Use(async (context, next) =>
-{
-    Console.WriteLine($"Logic before executing the next delegate in the Use method");
-    await next.Invoke();
-    Console.WriteLine($"Logic after executing the next delegate in the Use method");
-});
-app.Run(async context =>
-{
-    Console.WriteLine($"Writing the response to the client in the Run method");
-    await context.Response.WriteAsync("Hello from the middleware component.");
-});
 app.UseResponseCaching();
 app.UseHttpCacheHeaders();
 app.UseIpRateLimiting();

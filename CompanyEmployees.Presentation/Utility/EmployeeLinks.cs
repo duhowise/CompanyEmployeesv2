@@ -2,9 +2,11 @@
 using Entities.DataTransferObjects;
 using Entities.LinkModels;
 using Entities.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Net.Http.Headers;
 
-namespace CompanyEmployees.Utility;
+namespace CompanyEmployees.Presentation.Utility;
 
 public class EmployeeLinks
 {

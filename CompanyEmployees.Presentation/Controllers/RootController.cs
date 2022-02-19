@@ -1,7 +1,8 @@
 ﻿using Entities.LinkModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 
-namespace CompanyEmployees.Controllers;
+namespace CompanyEmployees.Presentation.Controllers;
 
 [ApiController]
 [Route("api")]

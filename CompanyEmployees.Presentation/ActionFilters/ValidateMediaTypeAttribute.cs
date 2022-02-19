@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Net.Http.Headers;
 
-namespace CompanyEmployees.ActionFilters;
+namespace CompanyEmployees.Presentation.ActionFilters;
 
 public class ValidateMediaTypeAttribute:IActionFilter
 {
