@@ -15,6 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using Repository;
+using Service;
 using Service.Contracts;
 
 namespace CompanyEmployees.Extensions;
@@ -137,6 +138,7 @@ public static class ServiceExtensions
                 Period = "5m"
             }
         };
+
         services.Configure<IpRateLimitOptions>(option => { option.GeneralRules = rateLimitRules; });
         services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
         services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
@@ -218,9 +220,6 @@ public static class ServiceExtensions
 
     public static void ConfigureServiceManager(this IServiceCollection services)
     {
-        services.AddScoped<IServiceManager, IServiceManager>();
+        services.AddScoped<IServiceManager, ServiceManager>();
     }
-
-
-
 }

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace CompanyEmployees.ActionFilters;
+namespace CompanyEmployees.Presentation.ActionFilters;
 
 public class ValidateEmployeeForCompanyExistsAttribute : IAsyncActionFilter
 {
@@ -18,8 +18,7 @@ public class ValidateEmployeeForCompanyExistsAttribute : IAsyncActionFilter
         ActionExecutionDelegate next)
     {
         var method = context.HttpContext.Request.Method;
-        var trackChanges = (method.Equals("PUT") || method.Equals("PATCH")) ? true :
-            false;
+        var trackChanges = (method.Equals("PUT") || method.Equals("PATCH"));
         var companyId = (Guid)(context.ActionArguments["companyId"] ?? Guid.Empty);
         var company = await _repository.Company.GetCompanyAsync(companyId, false);
         if (company == null)

@@ -10,6 +10,6 @@ namespace Contracts
         Task<IEnumerable<Company>> GetByIdsAsync(IEnumerable<Guid> ids, bool
             trackChanges);
         void DeleteCompany(Company company);
-
+        IEnumerable<Company> GetAllCompanies(bool trackChanges);
     }
 }

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using CompanyEmployees.ActionFilters;
-using CompanyEmployees.Utility;
+using CompanyEmployees.Presentation.ActionFilters;
+using CompanyEmployees.Presentation.Utility;
 using Contracts;
 using Entities.DataTransferObjects;
 using Entities.Models;
@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
-namespace CompanyEmployees.Controllers
+namespace CompanyEmployees.Presentation.Controllers
 {
     [Route("api/employees")]
     [ApiController]
@@ -134,7 +134,7 @@ namespace CompanyEmployees.Controllers
            var employeeEntity=HttpContext.Items["employee"] as Employee;
           
            var employeeToPatch = _mapper.Map<EmployeeForUpdateDto>(employeeEntity);
-           patchDoc.ApplyTo(employeeToPatch,ModelState);
+           //patchDoc.ApplyTo(employeeToPatch,ModelState);
            TryValidateModel(employeeToPatch);
            if (!ModelState.IsValid)
            {

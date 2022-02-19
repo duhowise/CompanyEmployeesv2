@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
-using CompanyEmployees.ActionFilters;
+using CompanyEmployees.Presentation.ActionFilters;
 using Contracts;
 using Entities.DataTransferObjects;
 using Entities.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CompanyEmployees.Controllers
+namespace CompanyEmployees.Presentation.Controllers
 {
     [Microsoft.AspNetCore.Mvc.Route("api/[controller]")]
     [ApiController]
