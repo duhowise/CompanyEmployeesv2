@@ -97,13 +97,19 @@ else
     app.UseHsts();
 }
 
-app.ConfigureExceptionHandler();
+var logger=app.Services.GetRequiredService<ILoggerManager>();
+app.ConfigureExceptionHandler(logger);
+if (app.Environment.IsProduction())
+{
+    app.UseHsts();
+}
 app.UseHttpsRedirection();
-app.UseCors("CorsPolicy");
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.All
 });
+app.UseCors("CorsPolicy");
+
 app.UseAuthorization();
 app.UseResponseCaching();
 app.UseHttpCacheHeaders();

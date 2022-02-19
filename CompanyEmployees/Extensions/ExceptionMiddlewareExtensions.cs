@@ -6,10 +6,9 @@ namespace CompanyEmployees.Extensions;
 
 public static class ExceptionMiddlewareExtensions
 {
-    public static void ConfigureExceptionHandler(this IApplicationBuilder app)
+    public static void ConfigureExceptionHandler(this IApplicationBuilder app, ILoggerManager logger)
     {
         using var scope = app.ApplicationServices.CreateScope();
-        var logger = scope.ServiceProvider.GetRequiredService<ILoggerManager>();
 
         app.UseExceptionHandler(appError =>
         {
