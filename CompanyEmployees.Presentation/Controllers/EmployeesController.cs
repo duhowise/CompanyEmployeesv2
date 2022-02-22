@@ -8,6 +8,7 @@ using Entities.RequestParameters;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Service.Contracts;
 
 namespace CompanyEmployees.Presentation.Controllers
 {
@@ -15,12 +16,12 @@ namespace CompanyEmployees.Presentation.Controllers
     [ApiController]
     public class EmployeesController : ControllerBase
     {
-        private readonly IRepositoryManager _repository;
+        private readonly IServiceManager _repository;
         private readonly ILoggerManager _logger;
         private readonly IMapper _mapper;
         private readonly EmployeeLinks _employeeLinks;
 
-        public EmployeesController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper , EmployeeLinks employeeLinks)
+        public EmployeesController(IServiceManager repository, ILoggerManager logger, IMapper mapper , EmployeeLinks employeeLinks)
         {
             _repository = repository;
             _logger = logger;
@@ -33,14 +34,14 @@ namespace CompanyEmployees.Presentation.Controllers
       [ServiceFilter(typeof(ValidateMediaTypeAttribute))]  
         public async Task<IActionResult> GetEmployeesForCompany(Guid companyId,[FromQuery] EmployeeParameters employeeParameters)
         {
-            var company =await _repository.Company.GetCompanyAsync(companyId, false);
+            var company =await _repository.CompanyService.GetCompanyAsync(companyId, false);
             if (company == null)
             {
                 _logger.LogInfo($"Company with Id: {companyId} does not exist");
                 return NotFound();
             }
 
-            var employeesFromDb =await _repository.Employee.GetEmployeesAsync(companyId,employeeParameters, trackChanges: false);
+            var employeesFromDb =await _repository.EmployeeService.GetEmployeesAsync(companyId,employeeParameters, trackChanges: false);
             Response.Headers.Add("X-Pagination",JsonConvert.SerializeObject(employeesFromDb.MetaData));
 
 
@@ -52,14 +53,14 @@ namespace CompanyEmployees.Presentation.Controllers
         [HttpGet("{id:guid}", Name = "GetEmployeeForCompany")]
         public async Task<IActionResult> GetEmployeeForCompany(Guid companyId, Guid id)
         {
-            var company =await _repository.Company.GetCompanyAsync(companyId, trackChanges: false);
+            var company =await _repository.CompanyService.GetCompanyAsync(companyId, trackChanges: false);
             if (company == null)
             {
                 _logger.LogInfo($"Company with Id: {companyId} does not exist");
                 return NotFound();
             }
 
-            var employee = _repository.Employee.GetEmployeeAsync(companyId, id, trackChanges: false);
+            var employee = _repository.EmployeeService.GetEmployeeAsync(companyId, id, trackChanges: false);
             var employeeDto = _mapper.Map<EmployeeDto>(employee);
             return Ok(employeeDto);
         }
@@ -79,7 +80,7 @@ namespace CompanyEmployees.Presentation.Controllers
                 _logger.LogError("Invalid model state for the EmployeeForCreationDto object");
                 return UnprocessableEntity(ModelState);
             }
-            var company =await _repository.Company.GetCompanyAsync(companyId, trackChanges: false);
+            var company =await _repository.CompanyService.GetCompanyAsync(companyId, trackChanges: false);
             if (company == null)
             {
                 _logger.LogInfo($"Company with id: {companyId} doesn't exist in the database.");
@@ -87,7 +88,7 @@ namespace CompanyEmployees.Presentation.Controllers
             }
 
             var employeeEntity = _mapper.Map<Employee>(employee);
-            _repository.Employee.CreateEmployeeForCompany(companyId, employeeEntity);
+            _repository.EmployeeService.CreateEmployeeForCompany(companyId, employeeEntity);
           await  _repository.SaveAsync();
             var employeeToReturn = _mapper.Map<EmployeeDto>(employeeEntity);
             return CreatedAtRoute("GetEmployeeForCompany", new
@@ -103,7 +104,7 @@ namespace CompanyEmployees.Presentation.Controllers
         {
             
             var employeeForCompany =HttpContext.Items["employee"] as Employee;
-           _repository.Employee.DeleteEmployee(employeeForCompany);
+           _repository.EmployeeService.DeleteEmployee(employeeForCompany);
           await  _repository.SaveAsync();
             return NoContent();
         }

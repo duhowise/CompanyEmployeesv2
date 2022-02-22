@@ -2,7 +2,7 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace CompanyEmployees.ModelBinders;
+namespace CompanyEmployees.Presentation.ModelBinders;
 
 public class ArrayModelBinder:IModelBinder
 {
