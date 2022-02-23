@@ -10,6 +10,7 @@
     <Folder Include="Configurations\" />
     <Folder Include="DataTransferObjects\" />
     <Folder Include="ErrorModel\" />
+    <Folder Include="Exceptions\" />
   </ItemGroup>
 
   <ItemGroup>

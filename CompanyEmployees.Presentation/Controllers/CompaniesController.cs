@@ -133,19 +133,10 @@ namespace CompanyEmployees.Presentation.Controllers
             {
                 return BadRequest("max age cannot be less than min age");
             }
-
-            var company = await _serviceManager.CompanyService.GetCompanyAsync(companyId, false);
-            if (company == null)
-            {
-                _logger.LogInfo($"Company with Id: {companyId} does not exist");
-                return NotFound();
-            }
-
-            var employeesFromDb =
+            var employeeDtos =
                 await _serviceManager.EmployeeService.GetEmployeesAsync(companyId, employeeParameters, trackChanges: false);
-            var employeesDto = _mapper.Map<EmployeeDto[]>(employeesFromDb);
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(employeesFromDb.MetaData));
-            return Ok(employeesDto);
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(employeeDtos.MetaData));
+            return Ok(employeeDtos);
         }
 
         [HttpPut("{id}")]

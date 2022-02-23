@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Contracts;
 using Entities.DataTransferObjects;
+using Entities.Exceptions;
 using Entities.Models;
 using Entities.RequestParameters;
 using Service.Contracts;
@@ -22,13 +23,28 @@ public class EmployeeService:IEmployeeService
 
     public async Task<PagedList<EmployeeDto>> GetEmployeesAsync(Guid companyId, EmployeeParameters employeeParameters, bool trackChanges)
     {
-        var employeePagedList= await _repository.Employee.GetEmployeesAsync(companyId, employeeParameters, trackChanges);
+        var company = await _repository.Company.GetCompanyAsync(companyId, false);
+        if (company == null)
+        {
+            _logger.LogInfo($"Company with Id: {companyId} does not exist");
+            throw new  CompanyNotFoundException(companyId);
+        }
+
+        var employeePagedList = await _repository.Employee.GetEmployeesAsync(companyId, employeeParameters, trackChanges);
         return _mapper.Map<PagedList<EmployeeDto>>(employeePagedList);
     }
 
     public async Task<EmployeeDto> GetEmployeeAsync(Guid companyId, Guid id, bool trackChanges)
     {
-        var employee= await _repository.Employee.GetEmployeeAsync(companyId, id, trackChanges);
+        var company = await _repository.Company.GetCompanyAsync(companyId, trackChanges: false);
+        if (company == null)
+        {
+            _logger.LogInfo($"Company with Id: {companyId} does not exist");
+            throw new  CompanyNotFoundException(companyId);
+        }
+
+        var employee = await _repository.Employee.GetEmployeeAsync(companyId, id, trackChanges);
+
         return _mapper.Map<EmployeeDto>(employee);
     }
 
