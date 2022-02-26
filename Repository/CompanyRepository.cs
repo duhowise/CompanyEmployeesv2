@@ -38,7 +38,7 @@ public class CompanyRepository:RepositoryBase<Company>,ICompanyRepository
         Create(company);
     }
 
-    public async Task<IEnumerable<Company>> GetByIdsAsync(IEnumerable<Guid> ids, bool trackChanges)
+    public async Task<IEnumerable<Company>> GetByIdsAsync(IEnumerable<Guid>? ids, bool trackChanges)
     {
         return await FindByCondition(x => ids.Contains(x.Id), trackChanges).ToListAsync();
 

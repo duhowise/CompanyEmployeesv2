@@ -56,9 +56,20 @@ public class EmployeeService : IEmployeeService
         return _mapper.Map<EmployeeDto>(employee);
     }
 
-    public void CreateEmployeeForCompany(Guid companyId, Employee employeeEntity)
+    public async Task<EmployeeDto> CreateEmployeeForCompany(Guid companyId, EmployeeForCreationDto? employee)
     {
+       
+        var company = await _repository.Company.GetCompanyAsync(companyId, trackChanges: false);
+        if (company == null)
+        {
+            _logger.LogInfo($"Company with id: {companyId} doesn't exist in the database.");
+            throw new CompanyNotFoundException(companyId);
+        }
+        var employeeEntity = _mapper.Map<Employee>(employee);
         _repository.Employee.CreateEmployeeForCompany(companyId, employeeEntity);
+        await _repository.SaveAsync();
+        var employeeToReturn = _mapper.Map<EmployeeDto>(employeeEntity);
+        return employeeToReturn;
     }
 
     public void DeleteEmployee(Employee employeeForCompany)

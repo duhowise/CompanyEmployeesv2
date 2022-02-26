@@ -24,6 +24,9 @@ public static class ExceptionMiddlewareExtensions
                         case NotFoundException:
                             context.Response.StatusCode = StatusCodes.Status404NotFound;
                             break;
+                        case BadRequestException:
+                            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                            break;
                         default:
                             context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                             break;

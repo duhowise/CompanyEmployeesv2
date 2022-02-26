@@ -3,7 +3,6 @@ using Contracts;
 using Entities.DataTransferObjects;
 using Entities.Exceptions;
 using Entities.Models;
-using Entities.RequestParameters;
 using Service.Contracts;
 
 namespace Service;
@@ -44,19 +43,54 @@ public class CompanyService:ICompanyService
     public async Task<CompanyDto> GetCompanyAsync(Guid id, bool trackChanges)
     {
         var company = await _repository.Company.GetCompanyAsync(id, trackChanges);
+
+        if (company == null)
+        {
+            throw new CompanyNotFoundException(id);
+        }
         var companyDto = _mapper.Map<CompanyDto>(company);
         return companyDto;
     }
 
-    public void CreateCompany(Company companyEntity)
+    public async Task<CompanyDto> CreateCompany(CompanyForCreationDto? company)
     {
-       _repository.Company.CreateCompany(companyEntity);
+        var companyEntity = _mapper.Map<Company>(company);
+        _repository.Company.CreateCompany(companyEntity);
+        await _repository.SaveAsync();
+        var companyToReturn = _mapper.Map<CompanyDto>(companyEntity);
+        return companyToReturn;
+
+    }
+    
+    
+    public async Task<(IEnumerable<CompanyDto> companies, string ids)> CreateCompany(
+        IEnumerable<CompanyForCreationDto> companyCollection)
+    {
+        if (companyCollection is null)
+            throw new CompanyCollectionBadRequest();
+        var companyEntities = _mapper.Map<IEnumerable<Company>>(companyCollection);
+        foreach (var company in companyEntities)
+        {
+            _repository.Company.CreateCompany(company);
+        }
+
+        await _repository.SaveAsync();
+        var companyCollectionToReturn =
+            _mapper.Map<IEnumerable<CompanyDto>>(companyEntities);
+        var ids = string.Join(",", companyCollectionToReturn.Select(c => c.Id));
+      return  (companies: companyCollectionToReturn, ids);
+
     }
 
-    public async Task<IEnumerable<CompanyDto>> GetByIdsAsync(IEnumerable<Guid> ids, bool trackChanges)
+    public async Task<IEnumerable<CompanyDto>> GetByIdsAsync(IEnumerable<Guid>? ids, bool trackChanges)
     {
-        var companies= await _repository.Company.GetByIdsAsync(ids, trackChanges);
-        return _mapper.Map<CompanyDto[]>(companies);
+        if (ids is null)
+            throw new IdParametersBadRequestException();
+        var companyEntities = await _repository.Company.GetByIdsAsync(ids, trackChanges);
+        if (ids.Count() != companyEntities.Count())
+            throw new CollectionByIdsBadRequestException();
+        return _mapper.Map<CompanyDto[]>(companyEntities);
+
     }
 
     public void DeleteCompany(CompanyDto company)

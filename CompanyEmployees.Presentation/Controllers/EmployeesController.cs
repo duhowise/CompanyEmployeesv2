@@ -3,6 +3,7 @@ using CompanyEmployees.Presentation.ActionFilters;
 using CompanyEmployees.Presentation.Utility;
 using Contracts;
 using Entities.DataTransferObjects;
+using Entities.Exceptions;
 using Entities.Models;
 using Entities.RequestParameters;
 using Microsoft.AspNetCore.JsonPatch;
@@ -58,29 +59,15 @@ namespace CompanyEmployees.Presentation.Controllers
         public async Task<IActionResult> CreateEmployeeForCompany(Guid companyId,
             [FromBody] EmployeeForCreationDto? employee)
         {
-            if (employee == null)
-            {
-                _logger.LogError("EmployeeForCreationDto object sent from client is null.");
-                return BadRequest("EmployeeForCreationDto object is null");
-            }
-
             if (!ModelState.IsValid)
             {
                 _logger.LogError("Invalid model state for the EmployeeForCreationDto object");
                 return UnprocessableEntity(ModelState);
             }
 
-            var company = await _serviceManager.CompanyService.GetCompanyAsync(companyId, trackChanges: false);
-            if (company == null)
-            {
-                _logger.LogInfo($"Company with id: {companyId} doesn't exist in the database.");
-                return NotFound();
-            }
 
-            var employeeEntity = _mapper.Map<Employee>(employee);
-            _serviceManager.EmployeeService.CreateEmployeeForCompany(companyId, employeeEntity);
-            await _serviceManager.SaveAsync();
-            var employeeToReturn = _mapper.Map<EmployeeDto>(employeeEntity);
+            var employeeToReturn = await _serviceManager.EmployeeService.CreateEmployeeForCompany(companyId, employee);
+
             return CreatedAtRoute("GetEmployeeForCompany", new
             {
                 companyId,
