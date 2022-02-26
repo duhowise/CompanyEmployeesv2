@@ -71,4 +71,20 @@ public class EmployeeService : IEmployeeService
         _repository.Employee.DeleteEmployee(employeeForCompany);
         await _repository.SaveAsync();
     }
+
+    public async Task UpdateEmployeeForCompany(Guid companyId, Guid id, EmployeeForUpdateDto employeeForUpdate,
+        bool compTrackChanges, bool empTrackChanges)
+    {
+        var company = await _repository.Company.GetCompanyAsync(companyId, compTrackChanges);
+        if (company is null)
+            throw new CompanyNotFoundException(companyId);
+
+        var employeeEntity = await _repository.Employee.GetEmployeeAsync(companyId, id,
+            empTrackChanges);
+
+        if (employeeEntity is null)
+            throw new EmployeeNotFoundException(id);
+        _mapper.Map(employeeForUpdate, employeeEntity);
+      await  _repository.SaveAsync();
+    }
 }

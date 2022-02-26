@@ -10,4 +10,8 @@ public interface IEmployeeService
     Task<EmployeeDto> GetEmployeeAsync(Guid companyId, Guid id, bool trackChanges);
     Task<EmployeeDto> CreateEmployeeForCompany(Guid companyId, EmployeeForCreationDto? employeeEntity);
     Task DeleteEmployeeForCompany(Guid companyId, Guid id, bool trackChanges);
+
+    Task UpdateEmployeeForCompany(Guid companyId, Guid id, EmployeeForUpdateDto employeeForUpdate,
+        bool compTrackChanges,
+        bool empTrackChanges);
 }   
