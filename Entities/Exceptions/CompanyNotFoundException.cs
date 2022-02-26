@@ -1,8 +1,12 @@
-﻿namespace Entities.Exceptions;
-
-public class CompanyNotFoundException:NotFoundException
+﻿namespace Entities.Exceptions
 {
-    public CompanyNotFoundException(Guid companyId) : base($"The company with id: {companyId} doesn't exist in the database.")
+    public class CompanyNotFoundException:NotFoundException
     {
+        public CompanyNotFoundException(Guid employeeId) : base($"The company with id: {employeeId} doesn't exist in the database.")
+        {
+        } 
+    
+    
+   
     }
 }

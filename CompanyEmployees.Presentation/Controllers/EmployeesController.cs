@@ -12,7 +12,7 @@ using Service.Contracts;
 
 namespace CompanyEmployees.Presentation.Controllers
 {
-    [Route("api/employees")]
+    [Route("api/companies/{companyId}/employees")]
     [ApiController]
     public class EmployeesController : ControllerBase
     {
@@ -40,9 +40,6 @@ namespace CompanyEmployees.Presentation.Controllers
                 await _serviceManager.EmployeeService.GetEmployeesAsync(companyId, employeeParameters,
                     trackChanges: false);
             Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(employeeDtos.MetaData));
-
-
-       
             var links = _employeeLinks.TryGenerateLinks(employeeDtos, employeeParameters.Fields, companyId,
                 HttpContext);
             return links.HasLinks ? Ok(links.LinkedEntities) : Ok(links.ShapedEntities);

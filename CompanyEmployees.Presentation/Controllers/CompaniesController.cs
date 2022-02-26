@@ -125,19 +125,7 @@ namespace CompanyEmployees.Presentation.Controllers
             return NoContent();
         }
 
-        [HttpGet("{companyId}/employees")]
-        public async Task<IActionResult> GetEmployeesForCompany(Guid companyId,
-            [FromQuery] EmployeeParameters employeeParameters)
-        {
-            if (!employeeParameters.ValidAgeRange)
-            {
-                return BadRequest("max age cannot be less than min age");
-            }
-            var employeeDtos =
-                await _serviceManager.EmployeeService.GetEmployeesAsync(companyId, employeeParameters, trackChanges: false);
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(employeeDtos.MetaData));
-            return Ok(employeeDtos);
-        }
+        
 
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]

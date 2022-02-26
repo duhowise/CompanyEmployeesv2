@@ -4,34 +4,42 @@ using Entities.DataTransferObjects;
 using Entities.Exceptions;
 using Entities.Models;
 using Entities.RequestParameters;
+using Microsoft.EntityFrameworkCore;
 using Service.Contracts;
 
 namespace Service;
 
-public class EmployeeService:IEmployeeService
+public class EmployeeService : IEmployeeService
 {
     private readonly IRepositoryManager _repository;
     private readonly IMapper _mapper;
     private readonly ILoggerManager _logger;
 
-    public EmployeeService(IRepositoryManager repository,IMapper mapper, ILoggerManager logger)
+    public EmployeeService(IRepositoryManager repository, IMapper mapper, ILoggerManager logger)
     {
         _repository = repository;
         _mapper = mapper;
         _logger = logger;
     }
 
-    public async Task<PagedList<EmployeeDto>> GetEmployeesAsync(Guid companyId, EmployeeParameters employeeParameters, bool trackChanges)
+    public async Task<PagedList<EmployeeDto>> GetEmployeesAsync(Guid companyId, EmployeeParameters employeeParameters,
+        bool trackChanges)
     {
         var company = await _repository.Company.GetCompanyAsync(companyId, false);
         if (company == null)
         {
             _logger.LogInfo($"Company with Id: {companyId} does not exist");
-            throw new  CompanyNotFoundException(companyId);
+            throw new CompanyNotFoundException(companyId);
         }
 
-        var employeePagedList = await _repository.Employee.GetEmployeesAsync(companyId, employeeParameters, trackChanges);
-        return _mapper.Map<PagedList<EmployeeDto>>(employeePagedList);
+        var employeeList =
+            await _repository.Employee.GetEmployeesAsync(companyId, employeeParameters, trackChanges);
+        var employeeListDto = _mapper.Map<List<EmployeeDto>>(employeeList);
+        var count = await _repository.Employee.FindByCondition(x => x.CompanyId.Equals(companyId), trackChanges)
+            .CountAsync();
+
+        return new PagedList<EmployeeDto>(employeeListDto, count, employeeParameters.PageNumber,
+            employeeParameters.PageSize);
     }
 
     public async Task<EmployeeDto> GetEmployeeAsync(Guid companyId, Guid id, bool trackChanges)
@@ -40,7 +48,7 @@ public class EmployeeService:IEmployeeService
         if (company == null)
         {
             _logger.LogInfo($"Company with Id: {companyId} does not exist");
-            throw new  CompanyNotFoundException(companyId);
+            throw new CompanyNotFoundException(companyId);
         }
 
         var employee = await _repository.Employee.GetEmployeeAsync(companyId, id, trackChanges);
@@ -50,12 +58,11 @@ public class EmployeeService:IEmployeeService
 
     public void CreateEmployeeForCompany(Guid companyId, Employee employeeEntity)
     {
-        _repository.Employee.CreateEmployeeForCompany(companyId,employeeEntity);
+        _repository.Employee.CreateEmployeeForCompany(companyId, employeeEntity);
     }
 
     public void DeleteEmployee(Employee employeeForCompany)
     {
         _repository.Employee.DeleteEmployee(employeeForCompany);
     }
-    
 }

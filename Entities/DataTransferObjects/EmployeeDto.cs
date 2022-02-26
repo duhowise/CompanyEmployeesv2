@@ -1,6 +1,6 @@
 ﻿namespace Entities.DataTransferObjects;
 
-public class EmployeeDto
+public record EmployeeDto
 {
     public EmployeeDto(Guid id, string name, int age, string position)
     {
@@ -8,6 +8,11 @@ public class EmployeeDto
         Name = name;
         Age = age;
         Position = position;
+    }
+
+    public EmployeeDto()
+    {
+        
     }
     public Guid Id { get; set; }
     public string Name { get; set; }
