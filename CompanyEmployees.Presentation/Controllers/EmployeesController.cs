@@ -87,12 +87,10 @@ namespace CompanyEmployees.Presentation.Controllers
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         [ServiceFilter(typeof(ValidateEmployeeForCompanyExistsAttribute))]
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateEmployeeForCompany(Guid companyId, Guid id,
-            [FromBody] EmployeeForUpdateDto? employee)
+        public async Task<IActionResult> UpdateEmployeeForCompany(Guid companyId, Guid id,[FromBody] EmployeeForUpdateDto? employee)
         {
-            var employeeEntity = HttpContext.Items["employee"] as Employee;
-            _mapper.Map(employee, employeeEntity);
-            await _serviceManager.SaveAsync();
+            if(employee is null) return BadRequest("EmployeeForUpdateDto object is null");
+            await  _serviceManager.EmployeeService.UpdateEmployeeForCompany(companyId, id, employee,false, true);
             return NoContent();
         }
 

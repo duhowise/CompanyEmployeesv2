@@ -29,8 +29,9 @@ public class EmployeeRepository : RepositoryBase<Employee>, IEmployeeRepository
 
     public async Task<Employee?> GetEmployeeAsync(Guid companyId, Guid id, bool trackChanges)
     {
-        return await FindByCondition(x => x.CompanyId.Equals(companyId) && x.Id.Equals(id), trackChanges)
+        var employee= await FindByCondition(x => x.CompanyId.Equals(companyId) && x.Id.Equals(id), trackChanges)
             .SingleOrDefaultAsync();
+        return employee;
     }
 
     public void CreateEmployeeForCompany(Guid companyId, Employee employee)
