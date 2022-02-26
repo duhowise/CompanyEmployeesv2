@@ -16,9 +16,9 @@ public class CompanyRepository:RepositoryBase<Company>,ICompanyRepository
         return FindAll(trackChanges).OrderBy(c => c.Name).ToList();
     }
 
-    public Company? GetCompany(Guid companyId, bool trackChanges)
+    public Company? GetCompany(Guid id, bool trackChanges)
     {
-        return FindByCondition(x => x.Id.Equals(companyId), trackChanges).SingleOrDefault();
+        return FindByCondition(x => x.Id.Equals(id), trackChanges).SingleOrDefault();
     }
 
     public async Task<IEnumerable<Company>> GetAllCompaniesAsync(bool trackChanges)
