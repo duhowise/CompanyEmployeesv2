@@ -8,6 +8,6 @@ public interface IEmployeeService
 {
     Task<PagedList<EmployeeDto>> GetEmployeesAsync(Guid companyId, EmployeeParameters employeeParameters, bool trackChanges);
     Task<EmployeeDto> GetEmployeeAsync(Guid companyId, Guid id, bool trackChanges);
-    void CreateEmployeeForCompany(Guid companyId, Employee employeeEntity);
-    void DeleteEmployee(Employee employeeForCompany);
+    Task<EmployeeDto> CreateEmployeeForCompany(Guid companyId, EmployeeForCreationDto? employeeEntity);
+    Task DeleteEmployeeForCompany(Guid companyId, Guid id, bool trackChanges);
 }   

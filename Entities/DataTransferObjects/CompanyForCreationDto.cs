@@ -1,16 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿namespace Entities.DataTransferObjects;
 
-namespace Entities.DataTransferObjects;
-
-public class CompanyForCreationDto
+public record CompanyForCreationDto(string Name, string Address, string Country, IEnumerable<EmployeeForCreationDto>? Employees)
 {
-    [Required(ErrorMessage = "company name is a required field.")]
-    public string? Name { get; set; }
-    [Required(ErrorMessage = "company address is a required field.")]
-    public string? Address { get; set; }
-    [Required(ErrorMessage = "Country name is a required field.")]
-    public string? Country { get; set; }
-    public IEnumerable<EmployeeForCreationDto>? Employees { get; set; }
-
+   
 }
 
