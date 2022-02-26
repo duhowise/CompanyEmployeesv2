@@ -80,9 +80,7 @@ namespace CompanyEmployees.Presentation.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEmployeeForCompany(Guid companyId, Guid id)
         {
-            var employeeForCompany = HttpContext.Items["employee"] as Employee;
-            _serviceManager.EmployeeService.DeleteEmployee(employeeForCompany);
-            await _serviceManager.SaveAsync();
+           await _serviceManager.EmployeeService.DeleteEmployeeForCompany(companyId,id,false);
             return NoContent();
         }
 

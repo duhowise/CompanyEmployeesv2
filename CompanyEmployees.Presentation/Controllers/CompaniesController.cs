@@ -70,10 +70,9 @@ namespace CompanyEmployees.Presentation.Controllers
         [HttpDelete("{id}")]
         [ServiceFilter(typeof(ValidateCompanyExistsAttribute))]
         public async Task<IActionResult> DeleteCompany(Guid id)
-        {
-            var company = await _serviceManager.CompanyService.GetCompanyAsync(id, trackChanges: false);
-            _serviceManager.CompanyService.DeleteCompany(company);
-            await _serviceManager.SaveAsync();
+        { 
+            await _serviceManager.CompanyService.DeleteCompany(id);
+           
             return NoContent();
         }
 

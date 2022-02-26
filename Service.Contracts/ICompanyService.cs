@@ -11,5 +11,5 @@ public interface ICompanyService
     Task<(IEnumerable<CompanyDto> companies, string ids)> CreateCompany(
         IEnumerable<CompanyForCreationDto> companyCollection);
     Task<IEnumerable<CompanyDto>> GetByIdsAsync(IEnumerable<Guid>? ids, bool trackChanges);
-    void DeleteCompany(CompanyDto company);
+    Task DeleteCompany(Guid company);
 }

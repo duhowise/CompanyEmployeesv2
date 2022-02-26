@@ -93,10 +93,13 @@ public class CompanyService:ICompanyService
 
     }
 
-    public void DeleteCompany(CompanyDto company)
+    public async Task DeleteCompany(Guid companyId)
     {
-        var companyModel=_mapper.Map<Company>(company);
-        _repository.Company.DeleteCompany(companyModel);
+        var company =await _repository.Company.GetCompanyAsync(companyId, false);
+        if (company != null) throw new CompanyNotFoundException(companyId);
+        _repository.Company.DeleteCompany(company);
+        await _repository.SaveAsync();
+        
     }
 
    
